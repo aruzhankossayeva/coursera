@@ -63,7 +63,7 @@ var switchMenuToActive = function () {
 // On page load (before images or CSS)
 document.addEventListener("DOMContentLoaded", function (event) {
 
-// TODO: STEP 0: Look over the code from
+var randomCategoryShortName = "";
 // *** start ***
 // to
 // *** finish ***
@@ -75,7 +75,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
 // random category into the home HTML snippet, and then insert that snippet into our
 // main page (index.html).
 //
-// TODO: STEP 1: Substitute [...] below with the *value* of the function buildAndShowHomeHTML,
+$ajaxUtils.sendGetRequest(
+  allCategoriesUrl,
+  buildAndShowHomeHTML,
+  true
+);
 // so it can be called when server responds with the categories data.
 
 // *** start ***
@@ -98,13 +102,34 @@ function buildAndShowHomeHTML (categories) {
     homeHtmlUrl,
     function (homeHtml) {
 
-      // TODO: STEP 2: Here, call chooseRandomCategory, passing it retrieved 'categories'
+      function buildAndShowHomeHTML(categories) {
+  var randomCategory = chooseRandomCategory(categories);
+  randomCategoryShortName = "'" + randomCategory.short_name + "'";
+
+  $ajaxUtils.sendGetRequest(
+    homeHtmlUrl,
+    function (homeHtml) {
+      var homeHtmlToInsertIntoMainPage =
+        insertProperty(
+          homeHtml,
+          "randomCategoryShortName",
+          randomCategoryShortName
+        );
+
+      insertHtml("#main-content", homeHtmlToInsertIntoMainPage);
+    },
+    false
+  );
+}
       // Pay attention to what type of data that function returns vs what the chosenCategoryShortName
       // variable's name implies it expects.
       // var chosenCategoryShortName = ....
 
 
-      // TODO: STEP 3: Substitute {{randomCategoryShortName}} in the home html snippet with the
+      function chooseRandomCategory(categories) {
+  var randomIndex = Math.floor(Math.random() * categories.length);
+  return categories[randomIndex];
+}
       // chosen category from STEP 2. Use existing insertProperty function for that purpose.
       // Look through this code for an example of how to do use the insertProperty function.
       // WARNING! You are inserting something that will have to result in a valid Javascript
